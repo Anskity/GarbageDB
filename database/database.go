@@ -49,3 +49,38 @@ func (d *Database) Setup() error {
 
     return nil
 }
+
+func (d *Database) CreateFile(path string) error {
+    path = filepath.Join(d.RootPath, path)
+    dirPath, _ := filepath.Split(path)
+
+    _, err := os.Stat(dirPath);
+    if err != nil {
+        if errors.Is(err, os.ErrNotExist) {
+            err = os.MkdirAll(dirPath, os.ModePerm)
+            if err != nil {
+                return err
+            }
+        } else {
+            return err
+        }
+    }
+
+    _, err = os.Create(path)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (d *Database) CreateFiles(paths... string) error {
+    for _, path := range paths {
+        err := d.CreateFile(path)
+
+        if err != nil {
+            return err
+        }
+    }
+    return nil
+}

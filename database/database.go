@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,17 +20,21 @@ func New(rootPath string) *Database {
 }
 
 func (d *Database) Setup() error {
-    jsonPath := "db.json"
-    _, err := os.Stat(filepath.Join(d.RootPath, jsonPath))
+    jsonPath := filepath.Join(d.RootPath, "db.json")
+    _, err := os.Stat(jsonPath)
 
-    if err != os.ErrNotExist {
+    if !errors.Is(err, os.ErrNotExist)  {
         return nil
     }
 
+    if err = os.Mkdir(d.RootPath, os.ModePerm); err != nil {
+        return err
+    }
     file, err := os.Create(jsonPath)
     if err != nil {
         return err
     }
+    defer file.Close()
     
     json :=
 `{

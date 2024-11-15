@@ -6,12 +6,11 @@ import (
 
 func main() {
 	db := database.New("./test")
-	err := db.Setup()
-	if err != nil {
+    if err := db.Setup(); err != nil {
 		panic(err)
 	}
 
-	err = db.CreateFiles(
+    err := db.CreateFiles(
         "users/theprimeagen/data.json",
         "users/fireship/data.json",
         "users/TJ/data.json",

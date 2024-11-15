@@ -84,3 +84,24 @@ func (d *Database) CreateFiles(paths... string) error {
     }
     return nil
 }
+
+type PathStatus int
+const (
+    PathDoesntExist PathStatus = iota
+    PathIsFile
+    PathIsDir
+)
+func (d *Database) GetPathStatus(path string) PathStatus {
+    path = filepath.Join(d.RootPath, path)
+    stat, err := os.Stat(path)
+    if os.IsNotExist(err) {
+        return PathDoesntExist
+    }
+
+    if stat.IsDir() {
+        return PathIsDir
+    }
+
+    return PathIsFile
+}
+
